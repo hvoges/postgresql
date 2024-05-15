@@ -1,0 +1,8 @@
+# SQL-Examples
+*.sql
+
+# the npg-binaries
+/npgsql/*
+
+# temporary files
+_*
