@@ -43,7 +43,7 @@ Table   Columns
     param(
         [string]$TableName,
 
-        [String[]]$ColumnName
+        $ColumnName
     )
 
     $FormattedStrings = [PSCustomObject]@{
@@ -57,8 +57,15 @@ Table   Columns
             }
             $FormattedStrings.Table = $NameParts -join '.'
     } 
+    # If the ColumnName parameter contains a single asterisk (*), it will be treated as a wildcard and returned as is.
     if ( $ColumnName -match '\*' ) {
         $FormattedStrings.Columns = [String]$ColumnName
+    }
+    ElseIf ( $ColumnName -is [System.Collections.Hashtable] ) {
+        $Columns = foreach ( $Column in $ColumnName.Keys ) {
+            '"{0}"' -f $Column.Trim('"')
+        }
+        $FormattedStrings.Columns = $Columns -join ',' | Out-String
     }
     ElseIf ( $ColumnName ) {
         $Columns = foreach ( $Column in $ColumnName ) {
