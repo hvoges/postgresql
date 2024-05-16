@@ -91,7 +91,7 @@ Function Add-PGDataset {
     )
 
     Begin {
-        if ( $PSCmdlet.ParameterSetName -eq 'Values' ) {
+        if ( $Values -isnot [System.Collections.Hashtable] ) {
             $DBStrings = Format-PGString -TableName $Table -ColumnName $Columns           
         }
         If (-not $Datasource ) {
@@ -108,35 +108,12 @@ Function Add-PGDataset {
     }
 
     Process {
-        if ( $PSCmdlet.ParameterSetName -eq 'Values' ) {
-            $ColumnString = '(' + ($Columns -join ',') + ''            
-            Switch ( $Values ) {
-                { $_ -is [System.Data.DataRow] } { $Values = $Values.itemarray }
-                { $_ -is [array] } { }
-                { $_ -is [PSObject] } { $Values = $Values.PSObject.Properties.Value }
-                Default { Write-Error 'Data cannot be converted'; Continue }
-            }
-            if ($Columns.Count -ne $Values.Count) {
-                Throw 'The number of columns and values must match'
-            }
-            $ValueList = ( 1..$Values.Count | ForEach-Object { '$' + $_ } ) -join ',' 
-            $Query = 'Insert into {0} {1} values({2});' -f $DBStrings.Table,$ColumnString,$ValueList
-            $Command = [npgsql.NpgsqlCommand]::new($Query, $Connection.Result)
-            Foreach ($Value in $Values) {
-                $Param = $Command.CreateParameter()
-                $Param.Value = $Value
-                $null = $Command.Parameters.Add($Param)   
-            }
-            $Result = $command.ExecuteNonQueryAsync()
-            # Wait till the query finished
-            if (( $Result.GetAwaiter().GetResult() ) -eq 1 ) {
-                Write-Verbose "Data inserted"
-            }
-        }
-        Elseif ( $PSCmdlet.ParameterSetName -eq 'ColumnValuePairs' ) {
-            $DBStrings = Format-PGString -TableName $Table -ColumnName $ColumnValuePairs.keys
+        if (( $Values -is [System.Collections.Hashtable] ) -or ( $Values -is [System.Collections.Specialized.OrderedDictionary])) {
+# ColumnValuePairs checken
+            $DBStrings = Format-PGString -TableName $Table -ColumnName $Values.keys 
             $ValueList = ( 1..$ColumnValuePairs.keys.Count | ForEach-Object { '$' + $_ } ) -join ',' 
             $Query = 'INSERT INTO {0} ({1}) VALUES ({2});' -f $DBStrings.Table, $DBStrings.Columns, $ValueList
+            Write-Verbose -Message "Query: $Query"
             $Command = [npgsql.NpgsqlCommand]::new($Query, $Connection.Result)
             Foreach ( $Value in $ColumnValuePairs.Values ) {
                 $Param = $Command.CreateParameter()
@@ -147,11 +124,47 @@ Function Add-PGDataset {
             # Wait till the query finished
             if ( $Result.GetAwaiter().GetResult() -eq 1 ) {
                 Write-Verbose "$($Writer.Result) rows updated in $Table"
+            }            
+        }
+        else
+        {
+            $ColumnString = '(' + ($Columns -join ',') + ')'            
+            Switch ( $Values ) {
+                { $_ -is [System.Data.DataRow] } { $Values = $Values.itemarray }
+                { $_ -is [array] } { }
+                { $_ -is [PSObject] } { $Values = $Values.PSObject.Properties.Value }
+
+                Default { Write-Error 'Data cannot be converted'; Continue }
+            }
+            if ($Columns.Count -ne $Values.Count) {
+                Throw 'The number of columns and values must match'
+            }
+            $ValueList = ( 1..$Values.Count | ForEach-Object { '$' + $_ } ) -join ',' 
+            $Query = 'Insert into {0} {1} values({2});' -f $DBStrings.Table,$ColumnString,$ValueList
+            $Command = [npgsql.NpgsqlCommand]::new($Query, $Connection.Result)
+            Foreach ($Value in $Values) {
+                $Param = $Command.CreateParameter()
+                if ( $Value -eq "Default") {
+                    $null = $Command.Parameters.Add('')
+                }
+                else {
+                    $Param.Value = $Value
+                    # $Param.DataTypeName =  $PgsDataTypeMapping.($value.gettype().fullname)
+                    $null = $Command.Parameters.Add($Param)
+                }
+
+            }
+            $Result = $command.ExecuteNonQueryAsync()
+            # Wait till the query finished
+            if (( $Result.GetAwaiter().GetResult() ) -eq 1 ) {
+                Write-Verbose "Data inserted"
             }
         }
     }
 
     End {
-        $Result.Dispose()    
+        if ( -not $Datasource ) {
+            $Result.Dispose()
+        }
     }
 }
