@@ -61,7 +61,7 @@ Table   Columns
     if ( $ColumnName -match '\*' ) {
         $FormattedStrings.Columns = [String]$ColumnName
     }
-    ElseIf ( $ColumnName -is [System.Collections.Hashtable] ) {
+    ElseIf (( $ColumnName -is [System.Collections.Hashtable] ) -or ( $Columname -is [System.Collections.Specialized.OrderedDictionary] )) {
         $Columns = foreach ( $Column in $ColumnName.Keys ) {
             '"{0}"' -f $Column.Trim('"')
         }
