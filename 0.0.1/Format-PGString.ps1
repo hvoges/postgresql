@@ -41,6 +41,7 @@ Table   Columns
 #>
     [CmdletBinding()]
     param(
+        [Parameter()]
         [string]$TableName,
 
         $ColumnName
@@ -48,6 +49,8 @@ Table   Columns
 
     $FormattedStrings = [PSCustomObject]@{
         Table = ''; 
+        Schema = '';
+        TableFullName = '';
         Columns = ''
     }
     
@@ -55,7 +58,9 @@ Table   Columns
             $NameParts = Foreach ( $part in $TableName.split('.')) {
                 '"{0}"' -f $part.Trim('"')
             }
-            $FormattedStrings.Table = $NameParts -join '.'
+            $FormattedStrings.Table = $NameParts[-1]
+            $FormattedStrings.Schema = $NameParts[0]
+            $FormattedStrings.TableFullName = $NameParts -join '.'
     } 
     # If the ColumnName parameter contains a single asterisk (*), it will be treated as a wildcard and returned as is.
     if ( $ColumnName -match '\*' ) {
