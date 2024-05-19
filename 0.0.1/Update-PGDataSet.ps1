@@ -68,7 +68,7 @@ Function Update-PGDataSet {
     $Column,$ComparionOperator,$ComparisonValue = $NewValue -split "($SqlOperators)",0 | ForEach-Object { $_.Trim() }
     $NewValue = '"{0}" {1} {2}' -f $Column,$ComparionOperator,$ComparisonValue
     $DBStrings = Format-PGString -TableName $Table 
-    $Query = 'Update {0} set {1} where {2};' -f $DBStrings.Table, $NewValue, $ColumnFilter
+    $Query = 'Update {0} set {1} where {2};' -f $DBStrings.TableFullName, $NewValue, $ColumnFilter
 
     if ( $PSCmdlet.ShouldProcess( $Table, "Update rows where $ColumnFilter" )) {
         If (-not $Datasource ) {

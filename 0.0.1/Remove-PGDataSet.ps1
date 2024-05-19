@@ -65,7 +65,7 @@ Function Remove-PGDataSet {
 
     Process {    
         $DBStrings = Format-PGString -TableName $Table 
-        $Query = 'delete FROM {0} where {1};' -f $DBStrings.Table, $ColumnFilter
+        $Query = 'delete FROM {0} where {1};' -f $DBStrings.TableFullName, $ColumnFilter
 
         if ( $PSCmdlet.ShouldProcess( $Table, "Remove rows where $ColumnFilter" ) ) {
             If (-not $Datasource ) {

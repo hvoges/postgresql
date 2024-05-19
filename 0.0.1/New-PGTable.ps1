@@ -83,7 +83,7 @@ function New-PGTable {
         }
         
         $DBStrings = Format-PGString -TableName $TableName 
-        $CreateStatement = "CREATE TABLE if not exists {0} `n({1}{2}{3});" -f $DBStrings.Table, $NewColumnPKStatement, ( $Columns -join ",`n"), $PKStatement
+        $CreateStatement = "CREATE TABLE if not exists {0} `n({1}{2}{3});" -f $DBStrings.TableFullName, $NewColumnPKStatement, ( $Columns -join ",`n"), $PKStatement
         $CreateStatement
     }
 }
