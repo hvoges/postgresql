@@ -87,7 +87,7 @@ Function Get-PGTable {
 
     Process {    
         $DBStrings = Format-PGString -TableName $Table -ColumnName $Columns
-        $Query = 'SELECT {1} FROM {0};' -f $DBStrings.Table, $DBStrings.Columns
+        $Query = 'SELECT {1} FROM {0};' -f $DBStrings.TableFullName, $DBStrings.Columns
 
         $Command = $Datasource.CreateCommand($Query)
         $Reader = $Command.ExecuteReaderAsync()
