@@ -3,6 +3,7 @@ Function Add-PGDataset {
     [CmdletBinding(DefaultParameterSetName = 'Values')]
     Param(
         [Parameter(Mandatory = $true)]
+        [ValidateScript({ $_ -match '^\w+\.\w+$' }, ErrorMessage = 'Table name must be in the format "schema.table"')]
         [String]$Table,
 
         [Parameter(ParameterSetName = 'Values')]
