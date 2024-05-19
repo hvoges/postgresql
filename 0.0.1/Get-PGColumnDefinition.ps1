@@ -2,6 +2,13 @@ function Get-PGColumnDefinition {
 
     [CmdletBinding()]
     Param(        
+
+        [Parameter()]
+        [string]$Table,
+
+        [Parameter()]
+        [string]$Database,        
+
         [Parameter(ParameterSetName = 'OnLink',
             ValueFromPipeline = $true,   
             ValueFromPipelineByPropertyName = $true)]
@@ -16,13 +23,12 @@ function Get-PGColumnDefinition {
         [Parameter(ParameterSetName = 'Connection')]    
         $Datasource = $Script:Datasource,
 
-        [Parameter()]
-        [string]$Database,
+        [Switch]$KeepOpen
 
-        [Parameter()]
-        [string]$Table
     )   
     Begin {
+        $DBStrings = Format-PGString -TableName $Table -ColumnName $Columns 
+
         If ( $PSCmdlet.ParameterSetName -eq 'OnLink') {
             $ConnectionString = @{
                 Host     = $ComputerName
@@ -42,7 +48,7 @@ function Get-PGColumnDefinition {
 SELECT * FROM information_schema.columns
 WHERE table_name = '{0}' 
 ORDER BY ordinal_position;
-"@ -f $Table
+"@ -f $DBStrings.Table.Trim('"')
 
         $Command = $Datasource.CreateCommand($Query)
         $Reader = $Command.ExecuteReaderAsync() 
@@ -52,6 +58,8 @@ ORDER BY ordinal_position;
         $DataTable = New-Object System.Data.DataTable
         $DataTable.Load($Reader.Result)
         $DataTable
-        $Reader.Dispose()     
+        If ( -not $KeepOpen ) {
+            $Reader.Dispose()
+        }
     }
 }
