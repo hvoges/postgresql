@@ -54,7 +54,7 @@ Copyright = '(c) HolgerVoges. All rights reserved.'
 # RequiredModules = @()
 
 # Assemblies that must be loaded prior to importing this module
-RequiredAssemblies = @('.\npgsql\Npgsql.dll','.\npgsql\Microsoft.Extensions.Logging.Abstractions.dll')
+RequiredAssemblies = @('.\npgsql\Microsoft.Bcl.AsyncInterfaces.dll','.\npgsql\Microsoft.Extensions.DependencyInjection.Abstractions.dll','.\npgsql\Microsoft.Extensions.Logging.Abstractions.dll','.\npgsql\Npgsql.dll','.\npgsql\System.Buffers.dll','.\npgsql\System.Memory.dll','.\npgsql\System.Numerics.Vectors.dll','.\npgsql\System.Runtime.CompilerServices.Unsafe.dll','.\npgsql\System.Text.Json.dll','.\npgsql\System.Threading.Tasks.Extensions.dll')
 
 # Script files (.ps1) that are run in the caller's environment prior to importing this module.
 # ScriptsToProcess = @()
