@@ -1,5 +1,5 @@
-function Format-PGString{
-<#
+function Format-PGString {
+    <#
 .SYNOPSIS
 Formats an input string for table names and column names.
 
@@ -41,7 +41,7 @@ Table   Columns
 #>
     [CmdletBinding()]
     param(
-        [ValidateScript({ $_ -match '^\w+\.\w+$' }, ErrorMessage = 'Table name must be in the format "schema.table"')]
+        [ValidateScript({ $_ -match '^\w+\.\w+$|^"\w+\"."\w+"$' }, ErrorMessage = 'Table name must be in the format "schema.table"')]
         [Parameter()]
         [string]$TableName,
 
@@ -49,20 +49,25 @@ Table   Columns
     )
 
     $FormattedStrings = [PSCustomObject]@{
-        Table = ''; 
-        Schema = '';
+        Table         = ''; 
+        Schema        = '';
         TableFullName = '';
-        Columns = ''
+        Columns       = ''
     }
     
-    If ( $TableName ) {
-            $NameParts = Foreach ( $part in $TableName.split('.')) {
-                '"{0}"' -f $part.Trim('"')
-            }
-            $FormattedStrings.Table = $NameParts[-1]
-            $FormattedStrings.Schema = $NameParts[0]
-            $FormattedStrings.TableFullName = $NameParts -join '.'
-    } 
+    If ( $TableName -match '^"\w+\"."\w+"$') {
+        $NameParts = Foreach ( $part in $TableName.split('.')) {
+            '{0}' -f $part.Trim('"')
+        }
+    }
+    else {
+        $NameParts = Foreach ( $part in $TableName.split('.')) {
+            '"{0}"' -f $part.Trim('"')
+        }
+    }
+    $FormattedStrings.Table = $NameParts[-1]
+    $FormattedStrings.Schema = $NameParts[0]
+    $FormattedStrings.TableFullName = $NameParts -join '.'
     # If the ColumnName parameter contains a single asterisk (*), it will be treated as a wildcard and returned as is.
     if ( $ColumnName -match '\*' ) {
         $FormattedStrings.Columns = [String]$ColumnName
