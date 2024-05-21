@@ -80,7 +80,7 @@ $Script:ToNpgsqlTypeMapping = @{
     'unknown'                  = 'NpgsqlDbType.Unknown'
 }
 
-$Script:ToNetTypeMappings = @{
+$Script:ToNetTypeMapping = @{
     'boolean'          = 'system.bool'
     'smallint'         = 'System.Int16'
     'integer'          = 'System.Int32'
