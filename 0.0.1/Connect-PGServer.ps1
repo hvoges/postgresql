@@ -45,14 +45,16 @@ This example connects to a PostgreSQL server running on localhost, using port 54
             Username = $Credential.UserName
             Password = $Credential.GetNetworkCredential().Password
         }
+        Write-Verbose "Creating connection string with Host: $ComputerName, Port: $Port, Username: $($Credential.UserName)"
+        
         $Script:Datasource = [Npgsql.NpgsqlDataSource]::Create($ConnectionString)
-        try {
-            $Script:Datasource.OpenConnection()   
+        Try {
+            $Script:Datasource.OpenConnection()  
             $Script:Datasource.Dispose()
-        }
-        catch {
+        } Catch {
             Throw $_.Exception.Message
         }
+        Write-Verbose "Connection to PostgreSQL server at $ComputerName on port $Port established successfully."
 
         If ($Passthru) {
             $Script:Datasource
