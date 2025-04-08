@@ -27,7 +27,10 @@ function Get-PGColumnDefinition {
 
     )   
     Begin {
-        $DBStrings = Format-PGString -TableName $Table -ColumnName $Columns 
+        if ($Table -notmatch '^"\w+\"."\w+"$') {
+            $DBStrings = Format-PGString -TableName $Table.TableFullName -ColumnName $Columns 
+        }
+
 
         If ( $PSCmdlet.ParameterSetName -eq 'OnLink') {
             $ConnectionString = @{
@@ -39,7 +42,7 @@ function Get-PGColumnDefinition {
             $Datasource = [Npgsql.NpgsqlDataSource]::Create($ConnectionString)
         }
         Elseif ( -not $Datasource ) {
-            Throw "Please connect to a PostgreSQL server first using Connect-PGDatabase or provide a Datasource object or connection parameters."
+            Throw "Please connect to a PostgreSQL server first using Connect-PGServer or provide a Datasource object or connection parameters."
         }
     }
 
