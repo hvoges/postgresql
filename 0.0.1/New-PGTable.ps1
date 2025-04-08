@@ -40,6 +40,10 @@ function New-PGTable {
 
     }
 
+    Process {
+        
+    }
+
     end {
         If (-not $Datasource ) {
             $ConnectionString = @{
