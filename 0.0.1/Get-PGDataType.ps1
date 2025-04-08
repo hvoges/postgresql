@@ -5,18 +5,8 @@ function Get-PGDataType {
         [Type]$Type
     )
 
-    $typeMap = @{
-        'System.String'    = 'TEXT'
-        'System.Int32'     = 'INTEGER'
-        'System.Int64'     = 'BIGINT'
-        'System.Double'    = 'DOUBLE PRECISION'
-        'System.Decimal'   = 'NUMERIC'
-        'System.DateTime'  = 'TIMESTAMP'
-        'System.Boolean'   = 'BOOLEAN'
-    }
-
-    if ($typeMap.ContainsKey($Type.FullName)) {
-        return $typeMap[$Type.FullName]
+    if ( $PostgresType = $Script:ToPGSqlTypeMapping.($Type.Fullname) ) {
+        return $PostgresType
     } else {
         return 'TEXT'
     }
