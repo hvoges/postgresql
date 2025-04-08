@@ -25,7 +25,7 @@ Function Invoke-PGSql {
 
     Begin {
         If ( -not $Database ) {
-            Throw "Please provide a database name or connect to a database first using Connect-PGDatabase."
+            Throw "Please provide a database name or connect to a database first using Connect-PGServer."
         }
         If ( $PSCmdlet.ParameterSetName -eq 'OnLink') {
             $ConnectionString = @{
@@ -38,7 +38,7 @@ Function Invoke-PGSql {
             $Datasource = [Npgsql.NpgsqlDataSource]::Create($ConnectionString)
         }
         Elseif ( -not $Datasource ) {
-            Throw "Please connect to a PostgreSQL server first using Connect-PGDatabase or provide a Datasource object or connection parameters."
+            Throw "Please connect to a PostgreSQL server first using Connect-PGServer or provide a Datasource object or connection parameters."
         }
     }    
     Process {    
