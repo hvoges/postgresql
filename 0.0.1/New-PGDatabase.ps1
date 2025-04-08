@@ -30,7 +30,7 @@ function New-PGDatabase {
             $Datasource = [Npgsql.NpgsqlDataSource]::Create($ConnectionString)
         }
         Elseif ( -not $Datasource ) {
-            Throw "Please connect to a PostgreSQL server first using Connect-PGDatabase or provide a Datasource object or connection parameters."
+            Throw "Please connect to a PostgreSQL server first using Connect-PGServer or provide a Datasource object or connection parameters."
         }
     }
 
