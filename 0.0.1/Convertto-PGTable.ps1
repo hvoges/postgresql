@@ -1,37 +1,26 @@
 function ConvertTo-PGTable {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
-        [PSObject]$InputObject,
+        [Parameter(Mandatory=$true,
+                   ValueFromPipeline)]
+        [Object]$InputObject,
 
-        [Parameter(mandatory=$true)]        
-        [string]$TableName,
-
-        [Switch]$PassThru
-
+        [Parameter(Mandatory=$true)]
+        [String]$TableName
     )
 
-    process {
-        # Get object properties and data types
-        $Properties = $InputObject.PSObject.Properties | Select-Object Name,TypeNameOfValue
-        # Map .NET data types to PostgreSQL data types
+    $CreateTable = "CREATE TABLE {0} (`n" -f $TableName
 
-        # Build CREATE TABLE statement
-        $CreateTable = "CREATE TABLE {0} (`n" -f $TableName
-        foreach ( $Property in $Properties ) {
-            $PostgresType = $Script:PgsDataTypeMapping[$Property.TypeNameOfValue]
-            if ( $null -eq $PostgresType ) { $PostgresType = 'text' } # Default to text if type not mapped
+    foreach ( $Property in $InputObject.PSObject.Properties ) {
+        if ( $PostgresType =  Get-PGDataType -Type $Property.TypeNameOfValue ) {
             $CreateTable += "`t{0} {1},`n" -f $Property.Name, $PostgresType
         }
-        $CreateTable = $CreateTable.TrimEnd(",`n")
-        $createTable += "`n);"
-
-        # Output CREATE TABLE statement
-        if ( $PassThru ) {
-            $CreateTable
-        }
         else {
-            Write-Verbose $CreateTable
+            $CreateTable += "`t{0} text,`n" -f $Property.Name
         }
-    }
+    }                
+    
+    $CreateTable = $CreateTable.TrimEnd(",`n")
+    $createTable += "`n);"
+    $CreateTable
 }
