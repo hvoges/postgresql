@@ -31,6 +31,8 @@ This example connects to a PostgreSQL server running on localhost, using port 54
         [string]$ComputerName = "localhost",
         
         [string]$Port = 5432, 
+
+        [String]$Database,
         
         [Parameter(Mandatory=$true)]
         [pscredential]$Credential,
@@ -45,12 +47,15 @@ This example connects to a PostgreSQL server running on localhost, using port 54
             Username = $Credential.UserName
             Password = $Credential.GetNetworkCredential().Password
         }
+        if ($Database) {
+            $ConnectionString.Database = $Database
+        }
         Write-Verbose "Creating connection string with Host: $ComputerName, Port: $Port, Username: $($Credential.UserName)"
         
         $Script:Datasource = [Npgsql.NpgsqlDataSource]::Create($ConnectionString)
         Try {
             $Script:Datasource.OpenConnection()  
-            $Script:Datasource.Dispose()
+            # $Script:Datasource.Dispose()
         } Catch {
             Throw $_.Exception.Message
         }
