@@ -1,6 +1,9 @@
 Function Get-PGDataBase {
     [CmdletBinding()]
     Param(        
+        [Parameter()]
+        [string]$Database,
+
         [Parameter(ParameterSetName = 'OnLink',
             ValueFromPipeline = $true,   
             ValueFromPipelineByPropertyName = $true)]
@@ -13,10 +16,7 @@ Function Get-PGDataBase {
         [PSCredential]$Credential,
 
         [Parameter(ParameterSetName = 'Connection')]    
-        $Datasource = $Script:Datasource,
-
-        [Parameter()]
-        [string]$Database
+        $Datasource = $Script:Datasource
     )    
 
     Begin {
@@ -30,7 +30,7 @@ Function Get-PGDataBase {
             $Datasource = [Npgsql.NpgsqlDataSource]::Create($ConnectionString)
         }
         Elseif ( -not $Datasource ) {
-            Throw "Please connect to a PostgreSQL server first using Connect-PGDatabase or provide a Datasource object or connection parameters."
+            Throw "Please connect to a PostgreSQL server first using Connect-PGServer or provide a Datasource object or connection parameters."
         }
     }
 
@@ -54,7 +54,7 @@ SELECT
     dattablespace as DefaultTableSpace,
     datcollate as Collation,
     datctype as CharacterClassification,
-    daticulocale as IcuLocale, 
+    datlocale as IcuLocale, 
     daticurules as IcuCollationRules,
     datcollversion as CollationVersion,
     array_to_string(datacl, ',') as datacl,
