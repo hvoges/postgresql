@@ -2,7 +2,6 @@ function Get-PGColumnDefinition {
 
     [CmdletBinding()]
     Param(        
-
         [Parameter()]
         [string]$Table,
 
@@ -21,16 +20,11 @@ function Get-PGColumnDefinition {
         [PSCredential]$Credential,
 
         [Parameter(ParameterSetName = 'Connection')]    
-        $Datasource = $Script:Datasource,
-
-        [Switch]$KeepOpen
-
+        $Datasource = $Script:Datasource
     )   
-    Begin {
-        if ($Table -notmatch '^"\w+\"."\w+"$') {
-            $DBStrings = Format-PGString -TableName $Table.TableFullName -ColumnName $Columns 
-        }
-
+    
+    Begin {     
+        $DBStrings = Format-PGString -TableName $Table.TableFullName -ColumnName $Columns 
 
         If ( $PSCmdlet.ParameterSetName -eq 'OnLink') {
             $ConnectionString = @{
