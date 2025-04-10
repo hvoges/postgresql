@@ -1,50 +1,31 @@
 function New-PGTable {
-    [CmdletBinding()]
 
+    [CmdletBinding(DefaultParameterSetName = 'Connection')]
     Param(
         [Parameter(Mandatory = $true, ParameterSetName = 'Connection')]    
-        $Datasource,
+        [Npgsql.NpgsqlDataSource]$Datasource,
 
         [Parameter(ParameterSetName = 'OnLink')]
         [string]$Server = "localhost",
         
         [Parameter(ParameterSetName = 'OnLink')]
         [string]$Port = "5432", 
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'OnLink')]
+        [PSCredential]$Credential,
         
         [Parameter(Mandatory = $true, ParameterSetName = 'OnLink')]
         [string]$Database,
 
-        [Parameter(Mandatory = $true)]
-        [String]$TableName,
+        [Parameter(Mandatory = $true, ValueFromPipeline)]            
+        [HashTable]$ColumnDefinition,
 
-        [Parameter(ParameterSetName='NewPKColumn')]
-        [String]$NewPKColumnName,
-
-        [Parameter(ParameterSetName='NewPKColumn')]
-        [Switch]$AutoIncrementOff,
-        
-        [Parameter(ParameterSetName='ExistingColumnPK')]
-        [String[]]$PKColumn,
-        
-        [Parameter(Mandatory = $true)]
-        [PSCredential]$Credential,
-
-        [Parameter(Mandatory = $true,
-            ValueFromPipeline)]            
-        [Object]$InputObject,
+        [String]$TableName = $ColumnDefinition.TableName,
 
         [Switch]$force
     )
 
     Begin {
-
-    }
-
-    Process {
-        
-    }
-
-    end {
         If (-not $Datasource ) {
             $ConnectionString = @{
                 Host     = $Server
@@ -54,14 +35,21 @@ function New-PGTable {
                 Password = $Credential.GetNetworkCredential().Password
             }
             $Datasource = [Npgsql.NpgsqlDataSource]::Create($ConnectionString)
-        }    
-        
+        }
+    }
+
+    Process {
         if ( $force ) {
             "DROP TABLE IF EXISTS {0};" -f $TableName
         }
 
-        if ( $PSCmdlet.ParameterSetName -eq 'NewPKColumn' ) {
-            If ( -not $AutoIncrementOff ){
+        if ( -not ( $TableName )) {
+            Throw "Please provide a value 'tablename' in the ColumnDefinition hash table or with parameter -tablename"
+        }
+        $TableDefinition.Remove("TableName")
+
+        if ( $ColumnDefinition.PrimaryKeyNewColumn ) {
+            If ( -not $ColumnDefinition.PrimaryKeyAutoIncrementOff ){
                 $Serial = 'Serial'
             }
             Else {
@@ -69,10 +57,10 @@ function New-PGTable {
             }
             $NewColumnPKStatement = "{0} {1} primary key,`n" -f $NewPKColumnName, $Serial
         }
-        Elseif ( $PSCmdlet.ParameterSetName -eq 'ExistingColumnPK' ) {
+        Elseif ( $ColumnDefinition.PrimaryKeyExistingColumn ) {
             $PrimaryKey = @()
             Foreach ( $Column in $PKColumn ) {
-                if ( $column -in $InputObject.PSObject.Properties.Name ) {
+                if ( $column -in $ColumnDefinition.Keys ) {
                     $PrimaryKey += $Column
                 }
                 else {
@@ -82,12 +70,16 @@ function New-PGTable {
             $PKStatement = ",`nPRIMARY KEY ({0})" -f $PrimaryKey -join ", "        
         }
 
-        $Columns = foreach ( $Property in $InputObject.PSObject.Properties ) {
-            "{0} {1}" -f $Property.Name, ( Get-PgDataType -Type $Property.TypeNameOfValue )
+        $Columns = foreach ( $Column in $ColumnDefinition.GetEnumerator()) {
+                "{0} {1}" -f $Column.key, ( Get-PgDataType -Type $Column.Value)
         }
         
         $DBStrings = Format-PGString -TableName $TableName 
         $CreateStatement = "CREATE TABLE if not exists {0} `n({1}{2}{3});" -f $DBStrings.TableFullName, $NewColumnPKStatement, ( $Columns -join ",`n"), $PKStatement
         $CreateStatement
+    }
+
+    end {
+
     }
 }
