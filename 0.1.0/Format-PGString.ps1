@@ -41,7 +41,7 @@ Table   Columns
 #>
     [CmdletBinding()]
     param(
-        [ValidateScript({ $_ -match '^\w+\.\w+$|^"\w+\"."\w+"$' }, ErrorMessage = 'Table name must be in the format "schema.table"')]
+        [ValidateScript({ $_ -match '^\w+\.\w+$|^"\w+"."\w+"$' }, ErrorMessage = 'Table name must be in the format "schema.table"')]
         [Parameter()]
         [string]$TableName,
 
