@@ -15,6 +15,7 @@
 . $PSScriptRoot\New-PGTable.ps1
 . $PSScriptRoot\Remove-PGDatabase.ps1
 . $PSScriptRoot\Remove-PGDataset.ps1
+. $PSScriptRoot\Remove-PGTable.ps1
 . $PSScriptRoot\Test-PGConnection.ps1
 . $PSScriptRoot\Update-PGDataSet.ps1
 . $PSScriptRoot\Use-PGDatabase.ps1
