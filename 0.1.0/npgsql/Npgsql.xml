@@ -4,6 +4,202 @@
         <name>Npgsql</name>
     </assembly>
     <members>
+        <member name="T:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute">
+            <summary>
+            Indicates that the specified method requires the ability to generate new code at runtime,
+            for example through <see cref="N:System.Reflection"/>.
+            </summary>
+            <remarks>
+            This allows tools to understand which methods are unsafe to call when compiling ahead of time.
+            </remarks>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute"/> class
+            with the specified message.
+            </summary>
+            <param name="message">
+            A message that contains information about the usage of dynamic code.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute.Message">
+            <summary>
+            Gets a message that contains information about the usage of dynamic code.
+            </summary>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute.Url">
+            <summary>
+            Gets or sets an optional URL that contains more information about the method,
+            why it requires dynamic code, and what options a consumer has to deal with it.
+            </summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.UnscopedRefAttribute.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Diagnostics.CodeAnalysis.UnscopedRefAttribute"/> class.
+            </summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.ExperimentalAttribute">
+            <summary>Indicates that an API is experimental and it may change in the future.</summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.ExperimentalAttribute.#ctor(System.String)">
+            <summary>Initializes a new instance of the <see cref="T:System.Diagnostics.CodeAnalysis.ExperimentalAttribute" /> class, specifying the ID that the compiler will use when reporting a use of the API the attribute applies to.</summary>
+            <param name="diagnosticId">The ID that the compiler will use when reporting a use of the API the attribute applies to.</param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.ExperimentalAttribute.DiagnosticId">
+            <summary>Gets the ID that the compiler will use when reporting a use of the API the attribute applies to.</summary>
+            <returns>The unique diagnostic ID.</returns>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.ExperimentalAttribute.UrlFormat">
+            <summary>Gets or sets the URL for corresponding documentation.
+            The API accepts a format string instead of an actual URL, creating a generic URL that includes the diagnostic ID.</summary>
+            <returns>The format string that represents a URL to corresponding documentation.</returns>
+        </member>
+        <member name="T:System.Diagnostics.UnreachableException">
+            <summary>
+            Exception thrown when the program executes an instruction that was thought to be unreachable.
+            </summary>
+        </member>
+        <member name="M:System.Diagnostics.UnreachableException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Diagnostics.UnreachableException"/> class with the default error message.
+            </summary>
+        </member>
+        <member name="M:System.Diagnostics.UnreachableException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Diagnostics.UnreachableException"/>
+            class with a specified error message.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+        </member>
+        <member name="M:System.Diagnostics.UnreachableException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Diagnostics.UnreachableException"/>
+            class with a specified error message and a reference to the inner exception that is the cause of
+            this exception.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception.</param>
+        </member>
+        <member name="P:System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute.FeatureName">
+            <summary>
+            The name of the compiler feature.
+            </summary>
+        </member>
+        <member name="P:System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute.IsOptional">
+            <summary>
+            If true, the compiler can choose to allow access to the location where this attribute is applied if it does not understand <see cref="P:System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute.FeatureName"/>.
+            </summary>
+        </member>
+        <member name="F:System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute.RefStructs">
+            <summary>
+            The <see cref="P:System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute.FeatureName"/> used for the ref structs C# feature.
+            </summary>
+        </member>
+        <member name="F:System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute.RequiredMembers">
+            <summary>
+            The <see cref="P:System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute.FeatureName"/> used for the required members C# feature.
+            </summary>
+        </member>
+        <member name="M:System.Runtime.Versioning.RequiresPreviewFeaturesAttribute.#ctor">
+            <summary>
+            Initializes a new instance of the <seealso cref="T:System.Runtime.Versioning.RequiresPreviewFeaturesAttribute"/> class.
+            </summary>
+        </member>
+        <member name="M:System.Runtime.Versioning.RequiresPreviewFeaturesAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <seealso cref="T:System.Runtime.Versioning.RequiresPreviewFeaturesAttribute"/> class with the specified message.
+            </summary>
+            <param name="message">An optional message associated with this attribute instance.</param>
+        </member>
+        <member name="P:System.Runtime.Versioning.RequiresPreviewFeaturesAttribute.Message">
+            <summary>
+            Returns the optional message associated with this attribute instance.
+            </summary>
+        </member>
+        <member name="P:System.Runtime.Versioning.RequiresPreviewFeaturesAttribute.Url">
+            <summary>
+            Returns the optional URL associated with this attribute instance.
+            </summary>
+        </member>
+        <member name="P:System.Collections.Generic.ReferenceEqualityComparer.Instance">
+            <summary>
+            Gets the singleton <see cref="T:System.Collections.Generic.ReferenceEqualityComparer"/> instance.
+            </summary>
+        </member>
+        <member name="M:System.Collections.Generic.ReferenceEqualityComparer.Equals(System.Object,System.Object)">
+            <summary>
+            Determines whether two object references refer to the same object instance.
+            </summary>
+            <param name="x">The first object to compare.</param>
+            <param name="y">The second object to compare.</param>
+            <returns>
+            <see langword="true"/> if both <paramref name="x"/> and <paramref name="y"/> refer to the same object instance
+            or if both are <see langword="null"/>; otherwise, <see langword="false"/>.
+            </returns>
+            <remarks>
+            This API is a wrapper around <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)"/>.
+            It is not necessarily equivalent to calling <see cref="M:System.Object.Equals(System.Object,System.Object)"/>.
+            </remarks>
+        </member>
+        <member name="M:System.Collections.Generic.ReferenceEqualityComparer.GetHashCode(System.Object)">
+            <summary>
+            Returns a hash code for the specified object. The returned hash code is based on the object
+            identity, not on the contents of the object.
+            </summary>
+            <param name="obj">The object for which to retrieve the hash code.</param>
+            <returns>A hash code for the identity of <paramref name="obj"/>.</returns>
+            <remarks>
+            This API is a wrapper around <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(System.Object)"/>.
+            It is not necessarily equivalent to calling <see cref="M:System.Object.GetHashCode"/>.
+            </remarks>
+        </member>
+        <member name="M:System.Text.EncodingExtensions.GetNonNullPinnableReference``1(System.ReadOnlySpan{``0})">
+            <summary>
+            Returns a reference to the 0th element of the ReadOnlySpan. If the ReadOnlySpan is empty, returns a reference to fake non-null pointer. Such a reference
+            can be used for pinning but must never be dereferenced. This is useful for interop with methods that do not accept null pointers for zero-sized buffers.
+            </summary>
+        </member>
+        <member name="M:System.Text.EncodingExtensions.GetNonNullPinnableReference``1(System.Span{``0})">
+            <summary>
+            Returns a reference to the 0th element of the ReadOnlySpan. If the ReadOnlySpan is empty, returns a reference to fake non-null pointer. Such a reference
+            can be used for pinning but must never be dereferenced. This is useful for interop with methods that do not accept null pointers for zero-sized buffers.
+            </summary>
+        </member>
+        <member name="M:System.Text.EncodingExtensions.GetChars(System.Text.Encoding,System.Buffers.ReadOnlySequence{System.Byte}@,System.Span{System.Char})">
+            <summary>
+            Decodes the specified <see cref="T:System.Buffers.ReadOnlySequence`1"/> to <see langword="char"/>s using the specified <see cref="T:System.Text.Encoding"/>
+            and outputs the result to <paramref name="chars"/>.
+            </summary>
+            <param name="encoding">The <see cref="T:System.Text.Encoding"/> which represents how the data in <paramref name="bytes"/> is encoded.</param>
+            <param name="bytes">The <see cref="T:System.Buffers.ReadOnlySequence`1"/> to decode to characters.</param>
+            <param name="chars">The destination buffer to which the decoded characters will be written.</param>
+            <returns>The number of chars written to <paramref name="chars"/>.</returns>
+            <exception cref="T:System.ArgumentException">Thrown if <paramref name="chars"/> is not large enough to contain the encoded form of <paramref name="bytes"/>.</exception>
+            <exception cref="T:System.Text.DecoderFallbackException">Thrown if <paramref name="bytes"/> contains data that cannot be decoded and <paramref name="encoding"/> is configured
+            to throw an exception when such data is seen.</exception>
+        </member>
+        <member name="T:System.Text.StringBuilderExtensions">
+            <summary>
+            A set of extension methods to <see cref="T:System.Text.StringBuilder"/> to allow runtime compatibility.
+            </summary>
+        </member>
+        <member name="M:System.Text.StringBuilderExtensions.Append(System.Text.StringBuilder,System.ReadOnlySpan{System.Char})">
+            <summary>
+            Appends the provided <see cref="T:System.ReadOnlySpan`1"/> to the <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="stringBuilder">The <see cref="T:System.Text.StringBuilder"/> to append to.</param>
+            <param name="span">The <see cref="T:System.ReadOnlySpan`1"/> to append.</param>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskExtensions.WaitAsync(System.Threading.Tasks.Task,System.TimeSpan,System.Threading.CancellationToken)">
+            <summary>
+            Gets a <see cref="T:System.Threading.Tasks.Task"/> that will complete when this <see cref="T:System.Threading.Tasks.Task"/> completes, when the specified timeout expires, or when the specified <see cref="T:System.Threading.CancellationToken"/> has cancellation requested.
+            </summary>
+            <param name="task">The <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous wait.</param>
+            <param name="timeout">The timeout after which the <see cref="T:System.Threading.Tasks.Task"/> should be faulted with a <see cref="T:System.TimeoutException"/> if it hasn't otherwise completed.</param>
+            <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken"/> to monitor for a cancellation request.</param>
+            <returns>The <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous wait.</returns>
+            <remarks>This method reproduces new to the .NET 6.0 API <see cref="T:System.Threading.Tasks.Task"/>.WaitAsync.</remarks>
+        </member>
         <member name="T:Npgsql.BackendMessages.CopyDataMessage">
             <summary>
             Note that this message doesn't actually contain the data, but only the length. Data is processed
@@ -564,6 +760,18 @@
             Creates and returns a <see cref="T:Npgsql.NpgsqlBatch"/> object associated with the <see cref="T:Npgsql.Internal.NpgsqlConnector"/>.
             </summary>
             <returns>A <see cref="T:Npgsql.NpgsqlBatch"/> object.</returns>
+        </member>
+        <member name="T:Npgsql.Internal.NpgsqlConnector.GSSPasswordMessageStream">
+            <summary>
+            This Stream is placed between NegotiateStream and the socket's NetworkStream (or SSLStream). It intercepts
+            traffic and performs the following operations:
+            * Outgoing messages are framed in PostgreSQL's PasswordMessage, and incoming are stripped of it.
+            * NegotiateStream frames payloads with a 5-byte header, which PostgreSQL doesn't understand. This header is
+            stripped from outgoing messages and added to incoming ones.
+            </summary>
+            <remarks>
+            See https://referencesource.microsoft.com/#System/net/System/Net/_StreamFramer.cs,16417e735f0e9530,references
+            </remarks>
         </member>
         <member name="T:Npgsql.Internal.ConnectorState">
             <summary>
@@ -1490,10 +1698,15 @@
             <inheritdoc cref="P:System.Data.Common.DbBatchCommand.Parameters"/>
         </member>
         <member name="M:Npgsql.NpgsqlBatchCommand.CreateParameter">
-            <inheritdoc/>
+            <summary>
+            Creates a new instance of a <see cref="T:Npgsql.NpgsqlParameter"/> object.
+            </summary>
+            <returns>An <see cref="T:Npgsql.NpgsqlParameter"/> object.</returns>
         </member>
         <member name="P:Npgsql.NpgsqlBatchCommand.CanCreateParameter">
-            <inheritdoc/>
+            <summary>
+            Returns whether the <see cref="M:Npgsql.NpgsqlBatchCommand.CreateParameter"/> method is implemented.
+            </summary>
         </member>
         <member name="P:Npgsql.NpgsqlBatchCommand.AppendErrorBarrier">
             <summary>
@@ -2694,14 +2907,11 @@
             A cached batch handed out by <see cref="M:Npgsql.NpgsqlConnection.CreateBatch" />, which is returned when disposed. Useful for reducing allocations.
             </summary>
         </member>
-        <member name="P:Npgsql.NpgsqlConnection.CanCreateBatch">
-            <inheritdoc/>
-        </member>
-        <member name="M:Npgsql.NpgsqlConnection.CreateDbBatch">
-            <inheritdoc/>
-        </member>
         <member name="M:Npgsql.NpgsqlConnection.CreateBatch">
-            <inheritdoc cref="M:System.Data.Common.DbConnection.CreateBatch"/>
+            <summary>
+            Creates and returns a <see cref="T:Npgsql.NpgsqlBatch"/> object associated with the <see cref="T:Npgsql.NpgsqlConnection"/>.
+            </summary>
+            <returns>A <see cref="T:Npgsql.NpgsqlBatch"/> object.</returns>
         </member>
         <member name="M:Npgsql.NpgsqlConnection.BeginDbTransaction(System.Data.IsolationLevel)">
             <summary>
@@ -2728,45 +2938,6 @@
             <param name="level">The isolation level under which the transaction should run.</param>
             <returns>A <see cref="T:Npgsql.NpgsqlTransaction"/> object representing the new transaction.</returns>
             <remarks>Nested transactions are not supported.</remarks>
-        </member>
-        <member name="M:Npgsql.NpgsqlConnection.BeginDbTransactionAsync(System.Data.IsolationLevel,System.Threading.CancellationToken)">
-            <summary>
-            Asynchronously begins a database transaction.
-            </summary>
-            <param name="isolationLevel">The isolation level under which the transaction should run.</param>
-            <param name="cancellationToken">
-            An optional token to cancel the asynchronous operation. The default value is <see cref="P:System.Threading.CancellationToken.None"/>.
-            </param>
-            <returns>A task whose <see cref="P:System.Threading.Tasks.ValueTask`1.Result"/> property is an object representing the new transaction.</returns>
-            <remarks>
-            Nested transactions are not supported.
-            </remarks>
-        </member>
-        <member name="M:Npgsql.NpgsqlConnection.BeginTransactionAsync(System.Threading.CancellationToken)">
-            <summary>
-            Asynchronously begins a database transaction.
-            </summary>
-            <param name="cancellationToken">
-            An optional token to cancel the asynchronous operation. The default value is <see cref="P:System.Threading.CancellationToken.None"/>.
-            </param>
-            <returns>A task whose Result property is an object representing the new transaction.</returns>
-            <remarks>
-            Nested transactions are not supported.
-            Transactions created by this method will have the <see cref="F:System.Data.IsolationLevel.ReadCommitted"/> isolation level.
-            </remarks>
-        </member>
-        <member name="M:Npgsql.NpgsqlConnection.BeginTransactionAsync(System.Data.IsolationLevel,System.Threading.CancellationToken)">
-            <summary>
-            Asynchronously begins a database transaction.
-            </summary>
-            <param name="level">The isolation level under which the transaction should run.</param>
-            <param name="cancellationToken">
-            An optional token to cancel the asynchronous operation. The default value is <see cref="P:System.Threading.CancellationToken.None"/>.
-            </param>
-            <returns>A task whose <see cref="P:System.Threading.Tasks.ValueTask`1.Result"/> property is an object representing the new transaction.</returns>
-            <remarks>
-            Nested transactions are not supported.
-            </remarks>
         </member>
         <member name="M:Npgsql.NpgsqlConnection.EnlistTransaction(System.Transactions.Transaction)">
             <summary>
@@ -4881,10 +5052,10 @@
             </summary>
         </member>
         <member name="P:Npgsql.NpgsqlException.BatchCommand">
-            <inheritdoc cref="P:System.Data.Common.DbException.BatchCommand"/>
-        </member>
-        <member name="P:Npgsql.NpgsqlException.DbBatchCommand">
-            <inheritdoc/>
+            <summary>
+            If the exception was thrown as a result of executing a <see cref="T:System.Data.Common.DbBatch"/>, references the <see cref="T:System.Data.Common.DbBatchCommand"/> within
+            the batch which triggered the exception. Otherwise <see langword="null"/>.
+            </summary>
         </member>
         <member name="M:Npgsql.NpgsqlException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
             <summary>
@@ -4933,28 +5104,6 @@
             <summary>
             Returns a strongly typed <see cref="T:System.Data.Common.DbDataAdapter"/> instance.
             </summary>
-        </member>
-        <member name="P:Npgsql.NpgsqlFactory.CanCreateDataAdapter">
-            <summary>
-            Specifies whether the specific <see cref="T:System.Data.Common.DbProviderFactory"/> supports the <see cref="T:System.Data.Common.DbDataAdapter"/> class.
-            </summary>
-        </member>
-        <member name="P:Npgsql.NpgsqlFactory.CanCreateCommandBuilder">
-            <summary>
-            Specifies whether the specific <see cref="T:System.Data.Common.DbProviderFactory"/> supports the <see cref="T:System.Data.Common.DbCommandBuilder"/> class.
-            </summary>
-        </member>
-        <member name="P:Npgsql.NpgsqlFactory.CanCreateBatch">
-            <inheritdoc/>
-        </member>
-        <member name="M:Npgsql.NpgsqlFactory.CreateBatch">
-            <inheritdoc/>
-        </member>
-        <member name="M:Npgsql.NpgsqlFactory.CreateBatchCommand">
-            <inheritdoc/>
-        </member>
-        <member name="M:Npgsql.NpgsqlFactory.CreateDataSource(System.String)">
-            <inheritdoc/>
         </member>
         <member name="M:Npgsql.NpgsqlFactory.GetService(System.Type)">
             <summary>
@@ -5678,7 +5827,7 @@
         <member name="M:Npgsql.NpgsqlParameter.ResolveTypeInfo(Npgsql.Internal.PgSerializerOptions)">
             Attempt to resolve a type info based on available (postgres) type information on the parameter.
         </member>
-        <member name="M:Npgsql.NpgsqlParameter.Bind(Npgsql.Internal.DataFormat@,Npgsql.Internal.Size@)">
+        <member name="M:Npgsql.NpgsqlParameter.Bind(Npgsql.Internal.DataFormat@,Npgsql.Internal.Size@,System.Nullable{Npgsql.Internal.DataFormat})">
             Bind the current value to the type info, truncate (if applicable), take its size, and do any final validation before writing.
         </member>
         <member name="M:Npgsql.NpgsqlParameter.ResetDbType">
