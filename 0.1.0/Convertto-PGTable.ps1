@@ -6,11 +6,12 @@ function ConvertTo-PGTable {
         [Object]$InputObject,
 
         [Parameter(Mandatory=$true)]
-        [String]$TableName
+        [String]$TableName,
+
+        [String]$PrimaryKey
     )
 
     $CreateTable = "CREATE TABLE {0} (`n" -f $TableName
-
     foreach ( $Property in $InputObject.PSObject.Properties ) {
         if ( $PostgresType =  Get-PGDataType -Type $Property.TypeNameOfValue ) {
             $CreateTable += "`t{0} {1},`n" -f $Property.Name, $PostgresType
