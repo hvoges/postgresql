@@ -75,7 +75,7 @@ Function Add-PGDataset {
                 { $_ -is [array]               } { break }
                 { $_ -is [PSObject]            } { $Values = $Values.PSObject.Properties.Value; break }
 
-                Default { Write-Error 'Data cannot be converted'; Continue }
+                Default { Write-Verbose 'Datatype wasn´t converted'; Continue }
             }
             if ( $Columns.Count -gt 1 -and $Values -is [string] ) {
                 Throw 'Values must be an array when inserting multiple columns'
@@ -87,20 +87,28 @@ Function Add-PGDataset {
             $Query = 'Insert into {0} {1} values({2});' -f $DBStrings.TableFullName,$ColumnString,$ValueList
             $Command = [npgsql.NpgsqlCommand]::new($Query, $Connection.Result)
             $TableColumns = Get-PGColumnDefinition -Table $DBStrings.TableFullName -Datasource $Datasource -KeepOpen
-            Foreach ($Value in $Values) {
+            For ( $i=0; $i -lt $Values.Count; $i++ ) {
+                $Value = $Values[$i]
+                $Column = $TableColumns.Where({ $_.column_name -eq $Columns[$i] })
                 $Param = $Command.CreateParameter()
                 if ( $Value -eq "Default") {
                     $null = $Command.Parameters.Add('')
                 }
                 else {
-                    $Param.Value = $Value
-                    # $Param.DataTypeName =  $PgsDataTypeMapping.($value.gettype().fullname)
+                    If ( $Column.udt_name -eq 'macaddr' ) {
+                        $Param.Value = [PhysicalAddress]$Value
+                    }
+                    Else {
+                        $Param.Value = $Value
+                    }
+                    $param.NpgsqlDbType = $Column.udt_name
+                    # $Param.DataTypeName = $Column.data_type
                     $null = $Command.Parameters.Add($Param)
                 }
 
             }
             $Result = $command.ExecuteNonQueryAsync()
-            # Wait till the query finished
+            # Wait till the query finished$ps
             if (( $Result.GetAwaiter().GetResult() ) -eq 1 ) {
                 Write-Verbose "Data inserted"
             }
