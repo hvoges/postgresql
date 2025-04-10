@@ -5,6 +5,5 @@ Function Get-PGConnection{
     )
 
     $Script:Datasource
-
 }
 
