@@ -101,7 +101,7 @@ $Script:ToNpgSqlTypeMapping = @{
     'unknown'                  = 'NpgsqlDbType.Unknown'
 }
 
-$Script:ToNetTypeMapping = @{
+$Script:ToNetTypeMapping = [ordered]@{
     'boolean'          = 'system.bool'
     'smallint'         = 'System.Int16'
     'integer'          = 'System.Int32'
@@ -132,8 +132,8 @@ $Script:ToNetTypeMapping = @{
     'polygon'          = 'NpgsqlTypes.NpgsqlPolygon'
     'circle'           = 'NpgsqlTypes.NpgsqlCircle'
     'cidr'             = 'NpgsqlTypes.NpgsqlInet'
-    'inet'             = 'NpgsqlTypes.NpgsqlInet'
-    'macaddr'          = 'NpgsqlTypes.NpgsqlMacAddress'
+    'inet'             = 'System.Net.IPAddress'
+    'macaddr'          = 'System.Net.NetworkInformation.PhysicalAddress'
     'bit'              = 'System.Collections.BitArray'
     'varbit'           = 'System.Collections.BitArray'
     'hstore'           = 'System.Collections.Generic.IDictionary<string, string>'
@@ -145,4 +145,27 @@ $Script:ToNetTypeMapping = @{
     'tsrange'          = 'NpgsqlTypes.NpgsqlRange<System.DateTime>'
     'tstzrange'        = 'NpgsqlTypes.NpgsqlRange<System.DateTimeOffset>'
     'daterange'        = 'NpgsqlTypes.NpgsqlRange<System.DateTime>'
+}
+
+$Script:Postgres2net = [ordered]@{
+    boolean = 'System.Boolean'
+    "char(1)" = 'System.Char'
+    smallint = 'System.Int16'
+    integer = 'System.Int32'
+    bigint = 'System.Int64'
+    numeric = 'System.Decimal'
+    real = 'System.Single'
+    "double precision" = 'System.Double'
+    "timestamp without time zone" = 'System.DateTime'
+    timestamptz = 'System.DateTimeOffset'
+    interval = 'system.TimeSpan'
+    bytea = 'system.byte[]]'
+    text = 'System.String'
+    uuid = 'System.Guid'
+    inet = 'System.Net.IPAddress'
+    macaddr = 'System.Net.NetworkInformation.PhysicalAddress'
+    tsquery = 'NpgsqlTsQuery'
+    tsvector = 'NpgsqlTsVector'
+    jsonb = 'System.Text.Json'
+    xml = 'System.Xml.XmlDocument'
 }
