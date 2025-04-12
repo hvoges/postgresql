@@ -1,5 +1,6 @@
 . $PSScriptRoot\Add-PGDataSet.ps1
 . $PSScriptRoot\Connect-PGServer.ps1
+. $PSScriptRoot\ConvertTo-PGNetType.ps1
 . $PSScriptRoot\Convertto-PGTable.ps1
 . $PSScriptRoot\ConvertTo-PGSqlComparisonOperator.ps1
 . $PSScriptRoot\Format-PGString.ps1
@@ -7,9 +8,9 @@
 . $PSScriptRoot\Get-PGDatabase.ps1
 . $PSScriptRoot\Get-PGDatabaseTable.ps1
 . $PSScriptRoot\Get-PGConnection.ps1
-. $PSScriptRoot\Get-PGTableMetadata.ps1
 . $PSScriptRoot\Get-PGDataType.ps1
 . $PSScriptRoot\Get-PGTable.ps1
+. $PSScriptRoot\Get-PGTableColumnType.ps1
 . $PSScriptRoot\Invoke-PGSql.ps1
 . $PSScriptRoot\New-PGDatabase.ps1
 . $PSScriptRoot\New-PGTable.ps1
