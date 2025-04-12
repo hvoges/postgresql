@@ -25,7 +25,9 @@ Function Add-PGDataset {
 
         [PSCredential]$Credential,
 
-        [Npgsql.NpgsqlDataSource]$Datasource = $Script:Datasource
+        [Npgsql.NpgsqlDataSource]$Datasource = $Script:Datasource,
+
+        [Switch]$KeepOpen
     )
 
     Begin {
@@ -50,11 +52,12 @@ Function Add-PGDataset {
 
     Process {
         if (( $Values -is [System.Collections.Hashtable] ) -or ( $Values -is [System.Collections.Specialized.OrderedDictionary])) {
-# ColumnValuePairs checken
+        # Add Properties using Command-Parameters        
             $DBStrings = Format-PGString -TableName $Table -ColumnName $Values.keys 
             $ValueList = ( 1..$Values.keys.Count | ForEach-Object { '$' + $_ } ) -join ',' 
             $Query = 'INSERT INTO {0} ({1}) VALUES ({2});' -f $DBStrings.TableFullName, $DBStrings.Columns, $ValueList
             Write-Verbose -Message "Query: $Query"
+            
             $Command = [npgsql.NpgsqlCommand]::new($Query, $Connection.Result)
             Foreach ( $Value in $Values.Values ) {
                 $Param = $Command.CreateParameter()
@@ -70,6 +73,7 @@ Function Add-PGDataset {
         else
         {
             $ColumnString = '(' + ($Columns -join ',') + ')'            
+            # convert Datarows and PSObjects to arrays 
             Switch ( $Values ) {
                 { $_ -is [System.Data.DataRow] } { $Values = $Values.itemarray; break }
                 { $_ -is [array]               } { break }
@@ -83,9 +87,18 @@ Function Add-PGDataset {
             elseif ( $Columns.Count -ne $Values.Count ) {
                 Throw 'The number of columns and values must match'
             }
+
+            # Generate enumerated List for Parameters in the form $Number 
+            # https://www.npgsql.org/doc/basic-usage.html#parameters
             $ValueList = ( 1..$Values.Count | ForEach-Object { '$' + $_ } ) -join ',' 
+            $TableColumns = Get-PGTableColumnType -Table $DBStrings.UnquotedTable -Datasource $Datasource 
             $Query = 'Insert into {0} {1} values({2});' -f $DBStrings.TableFullName,$ColumnString,$ValueList
             $Command = [npgsql.NpgsqlCommand]::new($Query, $Connection.Result)
+
+            for ( $i=1; $i -le $columns.length; $i++ ) {
+                $Command.Parameters.AddWithValue(( convertto-PGNetType -PGType $TableColumns.($Columns[$i-1]) -Value $Values[$i-1] ))
+            }
+<#
             $TableColumns = Get-PGColumnDefinition -Table $DBStrings.TableFullName -Datasource $Datasource -KeepOpen
             For ( $i=0; $i -lt $Values.Count; $i++ ) {
                 $Value = $Values[$i]
@@ -105,8 +118,8 @@ Function Add-PGDataset {
                     # $Param.DataTypeName = $Column.data_type
                     $null = $Command.Parameters.Add($Param)
                 }
-
             }
+#>
             $Result = $command.ExecuteNonQueryAsync()
             # Wait till the query finished$ps
             if (( $Result.GetAwaiter().GetResult() ) -eq 1 ) {
