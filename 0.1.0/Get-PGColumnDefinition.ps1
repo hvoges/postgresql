@@ -22,9 +22,9 @@ function Get-PGColumnDefinition {
         [Parameter(ParameterSetName = 'Connection')]    
         $Datasource = $Script:Datasource
     )   
-    
+
     Begin {     
-        $DBStrings = Format-PGString -TableName $Table.TableFullName -ColumnName $Columns 
+        $DBStrings = Format-PGString -TableName $Table -ColumnName $Columns 
 
         If ( $PSCmdlet.ParameterSetName -eq 'OnLink') {
             $ConnectionString = @{
