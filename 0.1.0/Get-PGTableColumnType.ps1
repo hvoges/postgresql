@@ -76,7 +76,12 @@ WHERE
         }
         $DataTable = New-Object System.Data.DataTable
         $DataTable.Load($Reader.Result)
-        $DataTable  
+        # Convert the Datatable to a Dictionary 
+        $ColumnData = [ordered]@{}
+        Foreach (  $Row in $DataTable.Rows ) {
+            $ColumnData[$Row.ColumnName] = $Row.DataType
+        }
+        Return $ColumnData
     }
     End {
         $Reader.Dispose()  
