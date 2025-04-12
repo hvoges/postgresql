@@ -48,11 +48,13 @@ Table   Columns
         $ColumnName
     )
 
-    $FormattedStrings = [PSCustomObject]@{
-        Table         = ''; 
-        Schema        = '';
-        TableFullName = '';
-        Columns       = ''
+    $FormattedStrings  = [PSCustomObject]@{
+        Table          = ''
+        Schema         = ''
+        TableFullName  = ''
+        Columns        = ''
+        UnquotedTable  = ''
+        UnquotedSchema = ''
     }
     
     If ( $TableName -match '^"\w+\"."\w+"$') {
@@ -68,6 +70,9 @@ Table   Columns
     $FormattedStrings.Table = $NameParts[-1]
     $FormattedStrings.Schema = $NameParts[0]
     $FormattedStrings.TableFullName = $NameParts -join '.'
+    $FormattedStrings.UnquotedTable = $FormattedStrings.Table.Trim('"')
+    $FormattedStrings.UnquotedSchema = $FormattedStrings.Schema.Trim('"')
+
     # If the ColumnName parameter contains a single asterisk (*), it will be treated as a wildcard and returned as is.
     if ( $ColumnName -match '\*' ) {
         $FormattedStrings.Columns = [String]$ColumnName
