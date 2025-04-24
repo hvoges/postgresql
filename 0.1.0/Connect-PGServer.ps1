@@ -50,11 +50,13 @@ This example connects to a PostgreSQL server running on localhost, using port 54
         if ($Database) {
             $ConnectionString.Database = $Database
         }
+        # Save the Database-Credential as a module-Variable because the datasource itself cannot be changed but only recreated
+        $script:ConnectionCredential = $Credential
         Write-Verbose "Creating connection string with Host: $ComputerName, Port: $Port, Username: $($Credential.UserName)"
         
         $Script:Datasource = [Npgsql.NpgsqlDataSource]::Create($ConnectionString)
         Try {
-            $Script:Datasource.OpenConnection()  
+            # $Script:Datasource.OpenConnection()  
             # $Script:Datasource.Dispose()
         } Catch {
             Throw $_.Exception.Message
