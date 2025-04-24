@@ -3,7 +3,7 @@ Function Add-PGDataset {
     [CmdletBinding(DefaultParameterSetName = 'Values')]
     Param(
         [Parameter(Mandatory = $true)]
-        [ValidateScript({ $_ -match '^\w+\.\w+$' }, ErrorMessage = 'Table name must be in the format "schema.table"')]
+        [ValidateScript({ $_ -match '^\w+\.\w+$' })]
         [String]$Table,
 
         [Parameter(ParameterSetName = 'Values')]
@@ -48,6 +48,7 @@ Function Add-PGDataset {
             Throw 'No connection information provided'
         }
         $Connection = $Datasource.OpenConnectionAsync()
+        $TableColumns = Get-PGTableColumnType -Table $DBStrings.UnquotedTable -Datasource $Datasource
     }
 
     Process {
@@ -90,36 +91,13 @@ Function Add-PGDataset {
 
             # Generate enumerated List for Parameters in the form $Number 
             # https://www.npgsql.org/doc/basic-usage.html#parameters
-            $ValueList = ( 1..$Values.Count | ForEach-Object { '$' + $_ } ) -join ',' 
-            $TableColumns = Get-PGTableColumnType -Table $DBStrings.UnquotedTable -Datasource $Datasource 
+            $ValueList = ( 1..$Values.Count | ForEach-Object { '$' + $_ } ) -join ','  
             $Query = 'Insert into {0} {1} values({2});' -f $DBStrings.TableFullName,$ColumnString,$ValueList
             $Command = [npgsql.NpgsqlCommand]::new($Query, $Connection.Result)
 
             for ( $i=1; $i -le $columns.length; $i++ ) {
                 $Command.Parameters.AddWithValue(( convertto-PGNetType -PGType $TableColumns.($Columns[$i-1]) -Value $Values[$i-1] ))
             }
-<#
-            $TableColumns = Get-PGColumnDefinition -Table $DBStrings.TableFullName -Datasource $Datasource -KeepOpen
-            For ( $i=0; $i -lt $Values.Count; $i++ ) {
-                $Value = $Values[$i]
-                $Column = $TableColumns.Where({ $_.column_name -eq $Columns[$i] })
-                $Param = $Command.CreateParameter()
-                if ( $Value -eq "Default") {
-                    $null = $Command.Parameters.Add('')
-                }
-                else {
-                    If ( $Column.udt_name -eq 'macaddr' ) {
-                        $Param.Value = [PhysicalAddress]$Value
-                    }
-                    Else {
-                        $Param.Value = $Value
-                    }
-                    $param.NpgsqlDbType = $Column.udt_name
-                    # $Param.DataTypeName = $Column.data_type
-                    $null = $Command.Parameters.Add($Param)
-                }
-            }
-#>
             $Result = $command.ExecuteNonQueryAsync()
             # Wait till the query finished$ps
             if (( $Result.GetAwaiter().GetResult() ) -eq 1 ) {
