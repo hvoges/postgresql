@@ -1,3 +1,4 @@
+. $PSScriptRoot\Add-PGSqlLibraries.ps1
 . $PSScriptRoot\Add-PGDataSet.ps1
 . $PSScriptRoot\Connect-PGServer.ps1
 . $PSScriptRoot\ConvertTo-PGNetType.ps1
@@ -24,3 +25,4 @@
 # . $PSScriptRoot\Convertto-PgsDataType.ps1
 
 Export-ModuleMember -Function *-PG* -Variable @($Script:ToPGSqlTypeMapping,$Script:ToNpgsqlTypeMapping,$Script:ToNetTypeMapping)  -Alias *
+Add-PGSqlLibraries
