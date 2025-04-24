@@ -83,8 +83,13 @@ Function Get-PGTable {
         Elseif ( -not $Datasource ) {
             Throw "Please connect to a PostgreSQL server first using Connect-PGServer or provide a Datasource object or connection parameters."
         }
-        If ( -not ( ( $Connection.ConnectionString.Split(";") | ConvertFrom-StringData).Database )) {
-            Throw "Please provide a database name or add a Database via Use-PGDatabase to your connection."
+        If ( -not ( ( $Datasource.ConnectionString.Split(";") | ConvertFrom-StringData).Database )) {
+            If ( $Database ) {
+                Use-PGDatabase -Database $Database
+            }
+            Else {
+                Throw "Please provide a database name or add a Database via Use-PGDatabase to your connection."
+            }
         }
     }
 
@@ -95,8 +100,12 @@ Function Get-PGTable {
         $Command = $Datasource.CreateCommand($Query)
         $Reader = $Command.ExecuteReaderAsync()
         if ( $Reader.Status -eq 'Faulted' ) {
-            return $Reader.Exception.Message
-        
+            If ( $Reader.Exception.InnerException ) {
+                return $Reader.Exception.InnerException.Message            
+            } 
+            Else {
+                return $Reader.Exception.Message
+            }
         }
         $DataTable = New-Object System.Data.DataTable
         $DataTable.Load($Reader.Result)
