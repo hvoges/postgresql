@@ -38,7 +38,12 @@ Function ConvertTo-PGNetType {
 
     if ( $ToNetTypeMapping.$PGType -and $Value ) 
     {
-        $Value -as [Type]$ToNetTypeMapping.$PGType
+        if ( $ConvertedValue = $Value -as [Type]$ToNetTypeMapping.$PGType ) {
+            $ConvertedValue
+        }
+        else {
+            Throw "$Value could not be converted to Postgres-compatible Datatype $($ToNetTypeMapping.$PGType)"
+        }
     }
     elseif ( $ToNetTypeMapping.$PGType ) {
         [Type]$ToNetTypeMapping.$PGType
