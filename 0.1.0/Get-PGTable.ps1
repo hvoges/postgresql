@@ -98,18 +98,35 @@ Function Get-PGTable {
         $Query = 'SELECT {1} FROM {0};' -f $DBStrings.TableFullName, $DBStrings.Columns
 
         $Command = $Datasource.CreateCommand($Query)
-        $Reader = $Command.ExecuteReaderAsync()
-        if ( $Reader.Status -eq 'Faulted' ) {
-            If ( $Reader.Exception.InnerException ) {
-                return $Reader.Exception.InnerException.Message            
-            } 
-            Else {
-                return $Reader.Exception.Message
-            }
-        }
+        $Reader = $Command.ExecuteReader()
+
         $DataTable = New-Object System.Data.DataTable
-        $DataTable.Load($Reader.Result)
-        $DataTable  
+        for ($i = 0; $i -lt $Reader.FieldCount; $i++) {
+            $DataTable.Columns.Add($Reader.GetName($i)) | Out-Null
+        }
+        
+        while ($Reader.Read()) {
+            $row = $DataTable.NewRow()
+            for ($i = 0; $i -lt $Reader.FieldCount; $i++) {
+                $row[$i] = $Reader.GetValue($i)
+            }
+            $DataTable.Rows.Add($row)
+        }
+        $Reader.Close()
+        $DataTable
+        # $Reader = $Command.ExecuteReaderAsync()
+        # $Reader = $Command.ExecuteReaderAsync().GetAwaiter().GetResult()
+        # if ( $Reader.Status -eq 'Faulted' ) {
+        #     If ( $Reader.Exception.InnerException ) {
+        #         return $Reader.Exception.InnerException.Message            
+        #     } 
+        #     Else {
+        #         return $Reader.Exception.Message
+        #     }
+        # }
+        # $DataTable = New-Object System.Data.DataTable
+        # $DataTable.Load($Reader.Result)
+        # $DataTable      
     }
     End {
         $Reader.Dispose()  
