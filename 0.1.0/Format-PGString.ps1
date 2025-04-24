@@ -41,11 +41,14 @@ Table   Columns
 #>
     [CmdletBinding()]
     param(
-        [ValidateScript({ $_ -match '^\w+\.\w+$|^"\w+"."\w+"$' }, ErrorMessage = 'Table name must be in the format "schema.table"')]
+        [ValidateScript({ if (-not $_ -match '^\w+\.\w+$|^"\w+"."\w+"$' ) {
+                          throw 'Table name must be in the format "schema.table"' 
+                          }
+                          $true })]
         [Parameter()]
         [string]$TableName,
 
-        $ColumnName
+        [String[]]$ColumnName
     )
 
     $FormattedStrings  = [PSCustomObject]@{
