@@ -6,9 +6,15 @@ Function Add-PGDataset {
         [ValidateScript({ $_ -match '^\w+\.\w+$' })]
         [String]$Table,
 
+        [Parameter(ParameterSetName = 'Values')]
+        # A String-Array with all Columns to be inserted. Alternativly use the ColumnValuePairs parameter
+        [String[]]$Columns, 
+
         [Parameter(Mandatory,
-            ValueFromPipeline)]
-        # A Hashtable or OrderedDictionary with column names as keys and values as values
+            ParameterSetName = 'Values',
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
+        # An Array with all Values to be inserted. 
         $Values,
 
         [string]$Server = "localhost",
@@ -25,7 +31,9 @@ Function Add-PGDataset {
     )
 
     Begin {
-        $DBStrings = Format-PGString -TableName $Table
+        if ( $Values -isnot [System.Collections.Hashtable] ) {
+            $DBStrings = Format-PGString -TableName $Table -ColumnName $Columns           
+        }
         If ( $Database -and $Credential ) {
             $ConnectionString = @{
                 Host     = $Server
@@ -44,49 +52,57 @@ Function Add-PGDataset {
     }
 
     Process {
-        # Convert the Parameter Values to Columns and Values
-        Switch ( $Values ) {
-            { ( $Values -is [System.Collections.Hashtable] ) -or ( $Values -is [System.Collections.Specialized.OrderedDictionary] ) } {
-                [Array]$ColumnNames = $Values.Keys
-                [Array]$ColumnValues = $Values.Values
-                break;
+        if (( $Values -is [System.Collections.Hashtable] ) -or ( $Values -is [System.Collections.Specialized.OrderedDictionary])) {
+        # Add Properties using Command-Parameters        
+            $DBStrings = Format-PGString -TableName $Table -ColumnName $Values.keys 
+            $ValueList = ( 1..$Values.keys.Count | ForEach-Object { '$' + $_ } ) -join ',' 
+            $Query = 'INSERT INTO {0} ({1}) VALUES ({2});' -f $DBStrings.TableFullName, $DBStrings.Columns, $ValueList
+            Write-Verbose -Message "Query: $Query"
+            
+            $Command = [npgsql.NpgsqlCommand]::new($Query, $Connection.Result)
+            Foreach ( $Value in $Values.Values ) {
+                $Param = $Command.CreateParameter()
+                $Param.Value = $Value
+                $null = $Command.Parameters.Add($Param)  
             }
-            { $_ -is [System.Data.DataRow] } { 
-                $ColumnNames = $Values.Table.Columns | ForEach-Object { $_.ColumnName }
-                $ColumnValues = $Values.ItemArray
-                break;
-            }
-            { $_ -is [System.Collections.IEnumerable] } {
-                Throw 'An array cannot be inserted. Use a HashTable or an Object instead.'
-            }
-            Default {
-                $ColumnNames = $Values.PSObject.Properties.Name
-                $ColumnValues = $Values.PSObject.Properties.Value
-            }
+            $Result = $command.ExecuteNonQueryAsync()
+            # Wait till the query finished
+            if ( $Result.GetAwaiter().GetResult() -eq 1 ) {
+                Write-Verbose "$($Writer.Result) rows updated in $Table"
+            }            
         }
-     
-        # convert Datarows and PSObjects to arrays 
-        Switch ( $ColumnValues ) {
-            { $_ -is [datetime] } { $_ = $_.ToString(); break }
-            #ToDo: Test the Object-Types. PSObject only tests for PSCustomObjects
-            #{ $_ -is [PSObject] } { $_ = $_.ToString(); break }
-        }
-        # Get the columns of the table
-        # Generate enumerated List for Parameters in the form $Number 
-        # https://www.npgsql.org/doc/basic-usage.html#parameters
-        $ColumnString = '(' + ( $ColumnNames -join ',') + ')'     
-        $ValueList = ( 1..$ColumnValues.Count | ForEach-Object { '$' + $_ } ) -join ',' 
-        $Query = 'Insert into {0} {1} values({2});' -f $DBStrings.TableFullName, $ColumnString, $ValueList
-        $Command = [npgsql.NpgsqlCommand]::new($Query, $Connection.Result)
+        else
+        {
+            $ColumnString = '(' + ($Columns -join ',') + ')'            
+            # convert Datarows and PSObjects to arrays 
+            Switch ( $Values ) {
+                { $_ -is [System.Data.DataRow] } { $Values = $Values.itemarray; break }
+                { $_ -is [array]               } { break }
+                { $_ -is [PSObject]            } { $Values = $Values.PSObject.Properties.Value; break }
 
-        # ColumnValues is a ValueCollection, so we need to convert it to an array
-        for ( $i = 1; $i -le $ColumnValues.length; $i++ ) {
-            $Command.Parameters.AddWithValue(( ConvertTo-PGDBType -TypeName $TableColumns.($ColumnNames[$i - 1])), ( convertto-PGNetType -PGType $TableColumns.($ColumnNames[$i - 1]) -Value $ColumnValues[$i - 1]))
-        }
-        $Result = $command.ExecuteNonQueryAsync()
-        # Wait till the query finished$ps
-        if (( $Result.GetAwaiter().GetResult() ) -eq 1 ) {
-            Write-Verbose "Data inserted"
+                Default { Write-Verbose 'Datatype wasn´t converted'; Continue }
+            }
+            if ( $Columns.Count -gt 1 -and $Values -is [string] ) {
+                Throw 'Values must be an array when inserting multiple columns'
+            }
+            elseif ( $Columns.Count -ne $Values.Count ) {
+                Throw 'The number of columns and values must match'
+            }
+
+            # Generate enumerated List for Parameters in the form $Number 
+            # https://www.npgsql.org/doc/basic-usage.html#parameters
+            $ValueList = ( 1..$Values.Count | ForEach-Object { '$' + $_ } ) -join ','  
+            $Query = 'Insert into {0} {1} values({2});' -f $DBStrings.TableFullName,$ColumnString,$ValueList
+            $Command = [npgsql.NpgsqlCommand]::new($Query, $Connection.Result)
+
+            for ( $i=1; $i -le $columns.length; $i++ ) {
+                $Command.Parameters.AddWithValue(( convertto-PGNetType -PGType $TableColumns.($Columns[$i-1]) -Value $Values[$i-1] ))
+            }
+            $Result = $command.ExecuteNonQueryAsync()
+            # Wait till the query finished$ps
+            if (( $Result.GetAwaiter().GetResult() ) -eq 1 ) {
+                Write-Verbose "Data inserted"
+            }
         }
     }
 
