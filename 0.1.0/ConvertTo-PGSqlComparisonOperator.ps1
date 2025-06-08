@@ -2,30 +2,46 @@ function ConvertTo-PGSqlComparisonOperator {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
-        [string]$SQLWhereClause
+        [string]$Operator
     )
 
+    ##ToDo: Add Match
     process {
-        $operators = @{
-            '='  = '-eq'
-            '<>' = '-ne'
-            '!=' = '-ne'
-            '>'  = '-gt'
-            '>=' = '-ge'
-            '<'  = '-lt'
-            '<=' = '-le'
-            'LIKE' = '-like'
-            'NOT LIKE' = '-notlike'
-            'IN' = '-in'
-            'NOT IN' = '-notin'
+        $Operators = @{
+            '-eq' = '='
+            '-ceq' = '='
+            '-ne' = '!='
+            '-cne' = '!='
+            '-gt' = '>' 
+            '-cgt' = '>'
+            '-ge' = '>='
+            '-cge' = '>='
+            '-lt' = '<' 
+            '-clt' = '<'
+            '-le' = '<='
+            '-cle' = '<='
+            '-like' = 'LIKE'
+            '-clike' = 'LIKE'
+            '-notlike' = 'NOT LIKE'
+            '-cnotlike' = 'NOT LIKE'
+            '-in' = 'IN'
+            '-cin' = 'IN'
+            '-notin' = 'NOT IN' 
+            '-cnotin' = 'NOT IN'
+            '-match' = 'SIMILAR TO'
+            '-cmatch' = 'SIMILAR TO'
+            '-notmatch' = 'NOT SIMILAR TO'
+            '-cnotmatch' = 'NOT SIMILAR TO'
+            '-contains' = 'IN'
+            '-ccontains' = 'IN'
+            '-notcontains' = 'NOT IN'
+            '-cnotcontains' = 'NOT IN'
         }
 
-        $newClause = $SQLWhereClause
-
-        foreach ($op in $operators.Keys) {
-            $newClause = $newClause -replace "\s+$op\s+", " $($operators[$op]) "
+        If ( -not $Operators.$Operator ) {
+            Write-Error "No matching operator found for $Operator"
+            return
         }
-
-        Write-Output $newClause
+        $Operators.$Operator
     }
 }
