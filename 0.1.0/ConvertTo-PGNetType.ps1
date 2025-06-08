@@ -41,8 +41,14 @@ Function ConvertTo-PGNetType {
         if ( $ConvertedValue = $Value -as [Type]$ToNetTypeMapping.$PGType ) {
             $ConvertedValue
         }
-        else {
-            Throw "$Value could not be converted to Postgres-compatible Datatype $($ToNetTypeMapping.$PGType)"
+    }
+    elseif ( $PGType -match "^character varying(\((?<length>\d*)\))$" -and $Value ) {
+        if ( $Value.ToString().length -gt $Matches.length ) {
+            Write-Warning "Value length exceeds maximum length of $($Matches.length) for type 'character varying'. Truncating value."
+            $Value.ToString().substring(0, $Matches.length)
+        }
+        Else {
+            $Value.ToString()
         }
     }
     elseif ( $ToNetTypeMapping.$PGType ) {
