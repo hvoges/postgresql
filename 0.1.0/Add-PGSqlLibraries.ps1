@@ -20,18 +20,25 @@ Function Add-PGSqlLibraries {
 
         $Handler = {
             param($Sender, $e)
-            $RequestedName = [System.Reflection.AssemblyName]::new($e.Name)
-            if ($RequestedName.Name -eq "System.Runtime.CompilerServices.Unsafe") {
-                return [System.Reflection.Assembly]::LoadFrom("$AssemblyPath\System.Runtime.CompilerServices.Unsafe.dll")
+            if ($global:Resolving) { return $null }
+            $global:Resolving = $true
+            try {
+                $RequestedName = [System.Reflection.AssemblyName]::new($e.Name)
+                if ($RequestedName.Name -eq "System.Runtime.CompilerServices.Unsafe") {
+                    return [System.Reflection.Assembly]::LoadFrom("$AssemblyPath\System.Runtime.CompilerServices.Unsafe.dll")
+                }
+                elseif ($RequestedName.Name -eq "System.Buffers") {
+                    return [System.Reflection.Assembly]::LoadFrom("$AssemblyPath\System.Buffers.dll")
+                }
+            } finally {
+                $global:Resolving = $false
             }
-            elseif ($RequestedName.Name -eq "System.Buffers") {
-                return [System.Reflection.Assembly]::LoadFrom("$AssemblyPath\System.Buffers.dll")
-            }
-            return $null
         }
         [AppDomain]::CurrentDomain.Add_AssemblyResolve($Handler)
     }
     Elseif ( $PSVersionTable.PSVersion.Major -gt 5 ) {
-        
+        $global:AssemblyPath = "$PSScriptRoot\npgsql\netcore\"
+        Add-Type -Path "$AssemblyPath\microsoft.Extensions.logging.abstractions.dll"
+        Add-Type -Path "$AssemblyPath\npgsql.dll"
     }
 }
