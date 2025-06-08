@@ -2,15 +2,15 @@ function Get-PGColumnDefinition {
 
     [CmdletBinding()]
     Param(        
-        [Parameter()]
+        [Parameter(mandatory = $true,
+                   ValueFromPipeline = $true,   
+                   ValueFromPipelineByPropertyName = $true)]
         [string]$Table,
 
         [Parameter()]
         [string]$Database,        
 
-        [Parameter(ParameterSetName = 'OnLink',
-            ValueFromPipeline = $true,   
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'OnLink')]
         [string]$ComputerName = "localhost",
         
         [Parameter(ParameterSetName = 'OnLink')]
