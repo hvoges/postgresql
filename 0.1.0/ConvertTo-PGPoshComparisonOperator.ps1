@@ -2,7 +2,7 @@ function ConvertTo-PGPoshComparisonOperator {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
-        [string]$Filter
+        [string]$Operator
     )
 
     ##ToDo: Add Match
@@ -21,10 +21,10 @@ function ConvertTo-PGPoshComparisonOperator {
             'NOT IN' = '-notin'
         }
 
-        If ( -not $Operators.$Filter ) {
-            Write-Error "No matching operator found for $Filter"
+        If ( -not $Operators.$Operator ) {
+            Write-Error "No matching operator found for $Operator"
             return
         }
-        $Operators.$Filter
+        $Operators.$Operator
     }
 }
