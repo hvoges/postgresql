@@ -1,12 +1,11 @@
 Function Get-PGDataBase {
     [CmdletBinding()]
     Param(        
-        [Parameter()]
+        [Parameter(ValueFromPipeline = $true,   
+                   ValueFromPipelineByPropertyName = $true)]
         [string]$Database,
 
-        [Parameter(ParameterSetName = 'OnLink',
-            ValueFromPipeline = $true,   
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ParameterSetName = 'OnLink')]
         [string]$ComputerName = "localhost",
         
         [Parameter(ParameterSetName = 'OnLink')]
